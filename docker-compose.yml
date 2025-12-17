@@ -26,32 +26,39 @@ services:
       retries: 5
 
   # Saleor API (Official)
-  api:
-    image: ghcr.io/saleor/saleor:3.21
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
-    environment:
-      DATABASE_URL: postgres://saleor:saleor123@postgres:5432/saleor
-      REDIS_URL: redis://redis:6379/0
-      SECRET_KEY: change-this-to-a-very-secure-key-123456789
-      ALLOWED_HOSTS: "*"
-      DEBUG: "false"
-      DEFAULT_FROM_EMAIL: admin@yourstore.com
-      DEFAULT_CHANNEL_SLUG: default-channel
-      CELERY_BROKER_URL: redis://redis:6379/1
-    volumes:
-      - media_data:/app/media
-    command: >
-      sh -c "
-      python manage.py migrate &&
-      echo 'Creating superuser...' &&
-      echo 'from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(\"admin@example.com\", \"admin123\") if not User.objects.filter(email=\"admin@example.com\").exists() else print(\"Admin exists\")' | python manage.py shell &&
-      python manage.py runserver 0.0.0.0:8000
-      "
+api:
+  image: ghcr.io/saleor/saleor:3.21
+  restart: unless-stopped
+  depends_on:
+    postgres:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  environment:
+    DATABASE_URL: postgres://saleor:saleor123@postgres:5432/saleor
+    REDIS_URL: redis://redis:6379/0
+    SECRET_KEY: change-this-to-a-very-secure-key-123456789
+    ALLOWED_HOSTS: "*"
+    DEBUG: "false"
+    DEFAULT_FROM_EMAIL: admin@yourstore.com
+    DEFAULT_CHANNEL_SLUG: default-channel
+    CELERY_BROKER_URL: redis://redis:6379/1
+  volumes:
+    - media_data:/app/media
+  command: >
+    sh -c "
+    echo 'Waiting for database to be ready...' &&
+    sleep 5 &&
+    python manage.py migrate &&
+    echo 'from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(\"admin@example.com\", \"admin123\") if not User.objects.filter(email=\"admin@example.com\").exists() else print(\"Admin exists\")' | python manage.py shell &&
+    python manage.py runserver 0.0.0.0:8000
+    "
+  healthcheck:
+    test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+    interval: 30s
+    timeout: 10s
+    retries: 3
+    start_period: 60s
 
   # Saleor Dashboard (Official)
   dashboard:
