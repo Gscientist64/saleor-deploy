@@ -44,7 +44,6 @@ services:
       DEBUG: "false"
       DEFAULT_FROM_EMAIL: admin@yourstore.com
       DEFAULT_CHANNEL_SLUG: default-channel
-      EMAIL_URL: console:
       CELERY_BROKER_URL: redis://redis:6379/1
     volumes:
       - media_data:/app/media
