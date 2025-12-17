@@ -9,21 +9,29 @@ services:
       POSTGRES_DB: saleor
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U saleor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Cache
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   # Saleor API (Official)
   api:
     image: ghcr.io/saleor/saleor:3.21
     restart: unless-stopped
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres  # Changed: removed condition
+      - redis     # Changed: removed condition
     environment:
       DATABASE_URL: postgres://saleor:saleor123@postgres:5432/saleor
       REDIS_URL: redis://redis:6379/0
@@ -66,14 +74,14 @@ services:
       PYTHONUNBUFFERED: "1"
     volumes:
       - media_data:/app/media
+    # REMOVED: healthcheck section
 
   # Saleor Dashboard (Official)
   dashboard:
     image: ghcr.io/saleor/saleor-dashboard:3.21
     restart: unless-stopped
     depends_on:
-      api:
-        condition: service_healthy
+      - api  # Changed: removed condition
     environment:
       API_URI: http://api:8000/graphql/
       APP_MOUNT_URI: /dashboard/
