@@ -38,6 +38,32 @@ services:
       DATABASE_URL: postgres://saleor:saleor123@postgres:5432/saleor
       REDIS_URL: redis://redis:6379/0
       SECRET_KEY: change-this-to-a-very-secure-key-123456789
+      RSA_PRIVATE_KEY: "MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQD74WEJ1E8snO5K
+                        P04PSjsW2CavLFj+cgR37s48z2H4DN2gJLvtQbigOrpb8116jQnZ+bET184QI4Sq
+                        WOGqjk1cziMPs0lZnzQAOtzszOkGji3ry62/NJURfRTA18NGyVtPq/IL3NlIBKYp
+                        qtqq2oqxKDeBKLFTpZ//e5/O3xIEjx82MCNZ/e2rvBcIfTH9ALDgJMG10G7LXZqK
+                        87dzDCyT7O/Cv+2SOfi8hCIDz5VJ6k7cCyeKZfID85Rr2gBTg+6xd5r+RjDkd1Ez
+                        GVq2surOMwaBWe3U2dvfhuYcTENNJsu67u2+atYwvTEVJ2vO3k2PKFQvETMwOKWj
+                        GTqc9A5vAgMBAAECggEADomTBrS0vx/tluZxdGt13psqHGkkV8cv39YuHA9iGaVw
+                        cyo7mHV3GPRaxizVI9oZC/Yf1MPbVk4efZB0sdnVuDoDhwfzf1MzdqHvF1G6T1EM
+                        cHQIeqUnx2MfPAQX9rFvbjk/1pRwC/qMtpHwXfUQFSp7jZ5SIcBI7D9v2UpBqXaV
+                        6Apf0lelLMRxBTU6EpMNGvv1w/XjbYaR4qEAC0CKKzG5C9GQAFGiPcQMdOvWeuOl
+                        eSjsv2ajHvUdHH7FWdp5go6HvEeoIO1CEYc9ri5ootUX8Q+YgF4o1ODZFB3KYdx7
+                        noxdxFrMmVEssV0gMdkb9GWNvgZrc/TKQCglRjj5KQKBgQD/kMlMUeQU0oLvllpE
+                        T7aGnr1yXUlD8fWYf2C9Jv8WGlza/EzTB4oczyzznlE6pScqhhYbWibNhLrWzlYI
+                        MVAyUUzUPyZOOKjMbB0nv9FNdeVtxQpNsMBBvG88x6Z9r6r9kd4bMtImiA4lYnWw
+                        TCRxLuqCCJj5NNg3ts8ycUVFmQKBgQD8Tv0zXdHvj6Wo37pGp+aYb7E7yqj7LKco
+                        2KcRJ+d/Maj4nhIyrX/NWU32MK7jLD/RaCuJTpM7zmziMGOplRnS1+P2k08ZNzOZ
+                        Znx4/BYuO1ILgrZ2FI543qfbWUI272tk6m3CfXsLoNkkXWVRUoRoKzar1odJa+Df
+                        SnBx7gJpRwKBgFCsk97TuvwXt92JyNTnlObKFWOUrxwTtUN+cjtDpCKGD+nQ2y+C
+                        ocaWX8pHn7yzhbmWukPIIZee3pwQZngPmRFJOMeHZ8Apgp+FQW7azmd1YAdWu/nq
+                        YcZehX7aR2RFn+SLt2E+mbgwGscSXbRZVOelt8F0lVWVqOttedqihwuBAoGBAM/l
+                        gir+Jor/0R+qYcHwfUij1+UNo1l7vK0if97aA51B3RomnZYWchVRfbTa/m//uQIi
+                        lKUKErWX7Q4fky9bxTB/Zb56ORXs7156HRxPkzM6++qyJQh8/bxIswVBsha0Bsjb
+                        hd9ZJ7c4LVQShPaSSLnQybakCUuNUXiLzMWDuYbnAoGBALAuC4AzX72AviFWOjWI
+                        78Cyx1NOO/lWTukfk2a/mdL8Zp+eI1/TeHOhr8Ca1HzRIGjjHeqX1LVkbwmOAKga
+                        onyn9qxSHhKw0b8xtao2yw5/Q5GNc5Y6qiJH01zZXMhEA85G7qOjoWqLdnpH6gYt
+                        fzvGmvvvUwYEWA4NYKVnWwNo"
       ALLOWED_HOSTS: "*"
       ALLOWED_CLIENT_HOSTS: "localhost,127.0.0.1,api,storefront,dashboard,postgres,redis,your-dokploy-domain.com"  # CRITICAL!
       DEBUG: "False"
