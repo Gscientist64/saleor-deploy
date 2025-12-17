@@ -27,9 +27,9 @@ services:
       timeout: 5s
       retries: 5
 
-  # Saleor API (Official) - FIXED IMAGE
+  # Saleor API (Official)
   api:
-    image: ghcr.io/saleor/saleor:3.21  # CHANGED to correct image
+    image: ghcr.io/saleor/saleor:3.21
     restart: unless-stopped
     depends_on:
       postgres:
@@ -39,7 +39,7 @@ services:
     environment:
       DATABASE_URL: postgres://saleor:saleor123@postgres:5432/saleor
       REDIS_URL: redis://redis:6379/0
-      SECRET_KEY: djfhg8734thg8347gh8347gh8347gh8347ght834  # CHANGE THIS!
+      SECRET_KEY: change-this-to-a-very-secure-key-123456789
       ALLOWED_HOSTS: "*"
       DEBUG: "false"
       DEFAULT_FROM_EMAIL: admin@yourstore.com
@@ -55,9 +55,9 @@ services:
       python manage.py runserver 0.0.0.0:8000
       "
 
-  # Saleor Dashboard (Official) - FIXED IMAGE
+  # Saleor Dashboard (Official)
   dashboard:
-    image: ghcr.io/saleor/saleor-dashboard:3.21  # CHANGED to correct image
+    image: ghcr.io/saleor/saleor-dashboard:3.21
     restart: unless-stopped
     depends_on:
       api:
@@ -65,15 +65,14 @@ services:
     environment:
       API_URI: http://api:8000/graphql/
       APP_MOUNT_URI: /dashboard/
-      SALEOR_APPS_ENDPOINT: http://api:8000/app-manifest/
 
-  # YOUR CUSTOM REACT STOREFRONT
+  # Your Custom React Storefront
   storefront:
     build:
-      context: .  # CHANGED to root directory
-      dockerfile: Dockerfile  # Uses the Dockerfile in root
+      context: .
+      dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_SALEOR_API_URL: https://demo.saleor.io/graphql/  # Public API for build
+        NEXT_PUBLIC_SALEOR_API_URL: https://demo.saleor.io/graphql/
         NEXT_PUBLIC_STOREFRONT_URL: http://localhost:3000
         NEXT_PUBLIC_DEFAULT_CHANNEL: default-channel
     restart: unless-stopped
@@ -81,10 +80,7 @@ services:
       - api
     environment:
       NEXT_PUBLIC_API_URI: http://api:8000/graphql/
-      NEXT_PUBLIC_APP_MOUNT_URI: /dashboard/
-      NEXT_PUBLIC_STOREFRONT_URL: http://localhost:3000
-      NEXT_PUBLIC_CHECKOUT_APPTUNNEL_URL: http://api:8000
-      NEXT_PUBLIC_SALEOR_API_URL: http://api:8000/graphql/  # Real API for runtime
+      NEXT_PUBLIC_SALEOR_API_URL: http://api:8000/graphql/
       NEXT_PUBLIC_DEFAULT_CHANNEL: default-channel
     ports:
       - "3000:3000"
