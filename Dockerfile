@@ -2,7 +2,7 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Accept build arguments
+# Accept build arguments from docker-compose
 ARG NEXT_PUBLIC_SALEOR_API_URL=https://demo.saleor.io/graphql/
 ARG NEXT_PUBLIC_STOREFRONT_URL=http://localhost:3000
 ARG NEXT_PUBLIC_DEFAULT_CHANNEL=default-channel
@@ -13,7 +13,7 @@ ENV NEXT_PUBLIC_STOREFRONT_URL=${NEXT_PUBLIC_STOREFRONT_URL}
 ENV NEXT_PUBLIC_DEFAULT_CHANNEL=${NEXT_PUBLIC_DEFAULT_CHANNEL}
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy package files
+# Copy ONLY package files first (better caching)
 COPY react-storefront/package.json react-storefront/pnpm-lock.yaml ./
 
 # Install pnpm and dependencies
