@@ -25,8 +25,8 @@ services:
       timeout: 5s
       retries: 5
 
-  # Saleor API (Official)
-  api:  # <-- ADDED 2 SPACES HERE
+  # Saleor API (Official) - Using Gunicorn
+  api:
     image: ghcr.io/saleor/saleor:3.21
     restart: unless-stopped
     depends_on:
@@ -47,18 +47,22 @@ services:
       - media_data:/app/media
     command: >
       sh -c "
-      echo 'Waiting for database to be ready...' &&
-      sleep 5 &&
-      python manage.py migrate &&
-      echo 'from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(\"admin@example.com\", \"admin123\") if not User.objects.filter(email=\"admin@example.com\").exists() else print(\"Admin exists\")' | python manage.py shell &&
-      python manage.py runserver 0.0.0.0:8000
+      echo '=== Starting Saleor API ===' &&
+      echo 'Waiting for database...' &&
+      sleep 10 &&
+      echo 'Running database migrations...' &&
+      python manage.py migrate --noinput &&
+      echo 'Creating default data...' &&
+      python manage.py populatedb --createsuperuser &&
+      echo 'Starting Gunicorn server...' &&
+      gunicorn saleor.wsgi:application --bind 0.0.0.0:8000 --workers 2 --access-logfile -
       "
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s
       timeout: 10s
-      retries: 3
-      start_period: 60s
+      retries: 5
+      start_period: 120s
 
   # Saleor Dashboard (Official)
   dashboard:
