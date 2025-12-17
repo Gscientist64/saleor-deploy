@@ -71,7 +71,7 @@ services:
       DEBUG: "false"
       DEFAULT_FROM_EMAIL: admin@143.105.174.
       STOREFRONT_URL: "http://143.105.174.140:3002"
-      DASHBOARD_URL: "http://143.105.174.140/dashboard"
+      DASHBOARD_URL: "http://143.105.174.140:3001/dashboard"
       DEFAULT_CHANNEL_SLUG: gtech-laptops
       CELERY_BROKER_URL: redis://redis:6379/1
       PYTHONUNBUFFERED: "1"
@@ -79,6 +79,8 @@ services:
       ENABLE_SSL: "false"  # Dokploy handles SSL
     volumes:
       - media_data:/app/media
+   # ports:
+    #  - "8000:8000"
     # REMOVED: healthcheck section
 
   # Saleor Dashboard (Official)
@@ -88,8 +90,10 @@ services:
     depends_on:
       - api  # Changed: removed condition
     environment:
-      API_URI: "http://143.105.174.140:8000/graphql/"
+      API_URI: "http://api:8000/graphql/"
       APP_MOUNT_URI: /dashboard/
+ #   ports:
+   #   - "3001:80"
 
   # Your Custom React Storefront
   storefront:
@@ -104,11 +108,11 @@ services:
     depends_on:
       - api
     environment:
-      NEXT_PUBLIC_API_URI: "http://143.105.174.140:8000/graphql/"
-      NEXT_PUBLIC_SALEOR_API_URL: "http://143.105.174.140:8000/graphql/"
+      NEXT_PUBLIC_API_URI: "http://api:8000/graphql/"
+      NEXT_PUBLIC_SALEOR_API_URL: "http://api:8000/graphql/"
       NEXT_PUBLIC_DEFAULT_CHANNEL: gtech-laptops
-    ports:
-      - "3002:3000"
+   # ports:
+   #   - "3002:3000"
 
 volumes:
   postgres_data:

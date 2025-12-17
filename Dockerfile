@@ -3,9 +3,9 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Accept build arguments
-ARG NEXT_PUBLIC_SALEOR_API_URL=https://demo.saleor.io/graphql/
+ARG NEXT_PUBLIC_SALEOR_API_URL=http://api:8000/graphql/
 ARG NEXT_PUBLIC_STOREFRONT_URL=http://localhost:3000
-ARG NEXT_PUBLIC_DEFAULT_CHANNEL=default-channel
+ARG NEXT_PUBLIC_DEFAULT_CHANNEL=gtech-laptops
 
 # Set environment variables
 ENV NEXT_PUBLIC_SALEOR_API_URL=${NEXT_PUBLIC_SALEOR_API_URL}
