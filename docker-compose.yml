@@ -65,13 +65,18 @@ services:
         8OSBT/bCRWC6GtfeFSXsUxopN0EKiIPC+3HeoSWlBHQFKepUglU2Cy+kNNYLjAf+
         lcotVg280ARd9nprtY6Fyhg=
         -----END PRIVATE KEY-----
-      ALLOWED_HOSTS: "*"
-      ALLOWED_CLIENT_HOSTS: "localhost,127.0.0.1,api,storefront,dashboard,postgres,redis"
+      ALLOWED_HOSTS: "143.105.174.140,localhost,127.0.0.1,api"
+      ALLOWED_CLIENT_HOSTS: "143.105.174.140,localhost,127.0.0.1"
+      ALLOWED_REDIRECT_URLS: "http://143.105.174.140:3002,http://143.105.174.140/dashboard/app"
       DEBUG: "false"
-      DEFAULT_FROM_EMAIL: admin@yourstore.com
-      DEFAULT_CHANNEL_SLUG: default-channel
+      DEFAULT_FROM_EMAIL: admin@143.105.174.
+      STOREFRONT_URL: "http://143.105.174.140:3002"
+      DASHBOARD_URL: "http://143.105.174.140/dashboard"
+      DEFAULT_CHANNEL_SLUG: gtech-laptops
       CELERY_BROKER_URL: redis://redis:6379/1
       PYTHONUNBUFFERED: "1"
+      # HTTPS settings for reverse proxy:
+      ENABLE_SSL: "false"  # Dokploy handles SSL
     volumes:
       - media_data:/app/media
     # REMOVED: healthcheck section
@@ -83,7 +88,7 @@ services:
     depends_on:
       - api  # Changed: removed condition
     environment:
-      API_URI: http://api:8000/graphql/
+      API_URI: "http://143.105.174.140:8000/graphql/"
       APP_MOUNT_URI: /dashboard/
 
   # Your Custom React Storefront
@@ -92,16 +97,16 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_SALEOR_API_URL: https://demo.saleor.io/graphql/
-        NEXT_PUBLIC_STOREFRONT_URL: http://localhost:3002
-        NEXT_PUBLIC_DEFAULT_CHANNEL: default-channel
+        NEXT_PUBLIC_SALEOR_API_URL: "http://143.105.174.140:8000/graphql/"
+        NEXT_PUBLIC_STOREFRONT_URL: "http://143.105.174.140:3002"
+        NEXT_PUBLIC_DEFAULT_CHANNEL: gtech-laptops
     restart: unless-stopped
     depends_on:
       - api
     environment:
-      NEXT_PUBLIC_API_URI: http://api:8000/graphql/
-      NEXT_PUBLIC_SALEOR_API_URL: http://api:8000/graphql/
-      NEXT_PUBLIC_DEFAULT_CHANNEL: default-channel
+      NEXT_PUBLIC_API_URI: "http://143.105.174.140:8000/graphql/"
+      NEXT_PUBLIC_SALEOR_API_URL: "http://143.105.174.140:8000/graphql/"
+      NEXT_PUBLIC_DEFAULT_CHANNEL: gtech-laptops
     ports:
       - "3002:3000"
 
