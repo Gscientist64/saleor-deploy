@@ -2,29 +2,29 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Accept build arguments from docker-compose
+# Accept build arguments
 ARG NEXT_PUBLIC_SALEOR_API_URL=https://demo.saleor.io/graphql/
 ARG NEXT_PUBLIC_STOREFRONT_URL=http://localhost:3000
 ARG NEXT_PUBLIC_DEFAULT_CHANNEL=default-channel
 
-# Set environment variables for build
+# Set environment variables
 ENV NEXT_PUBLIC_SALEOR_API_URL=${NEXT_PUBLIC_SALEOR_API_URL}
 ENV NEXT_PUBLIC_STOREFRONT_URL=${NEXT_PUBLIC_STOREFRONT_URL}
 ENV NEXT_PUBLIC_DEFAULT_CHANNEL=${NEXT_PUBLIC_DEFAULT_CHANNEL}
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Copy ONLY package files first (better caching)
+# Copy package files
 COPY react-storefront/package.json react-storefront/pnpm-lock.yaml ./
 
-# Install pnpm and dependencies
+# Install dependencies
 RUN corepack enable
 RUN pnpm install --frozen-lockfile
 
 # Copy all source code
 COPY react-storefront/ .
 
-# Try to generate GraphQL types, but continue if it fails
-RUN { pnpm run generate 2>/dev/null || echo "⚠️ GraphQL type generation failed. Continuing build..."; }
+# SOLUTION: Remove prebuild hooks to skip generation
+RUN npm pkg delete scripts.prebuild scripts.predev
 
 # Build the application
 RUN pnpm run build
