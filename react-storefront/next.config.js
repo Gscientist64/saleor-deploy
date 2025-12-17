@@ -2,37 +2,17 @@
 const config = {
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**', // Allow all HTTPS hosts
-      },
-      {
-        protocol: 'http',
-        hostname: '**',
-      },
+      { protocol: 'https', hostname: '**' },
+      { protocol: 'http', hostname: '**' },
     ],
   },
-  output: 'standalone', // IMPORTANT for Docker
+  output: 'standalone',
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
+  // REMOVE eslint config entirely
+  // REMOVE swcMinify
   compress: true,
-  // REMOVED: swcMinify (causes issues)
-  // REMOVED: experimental options (cause issues)
-  
-  // Add these for better build handling
-  staticPageGenerationTimeout: 120,
-  reactStrictMode: true,
-  
-  // Optional: Logging during build
-  logging: {
-    fetches: {
-      fullUrl: true,
-    },
-  },
 };
 
 export default config;
