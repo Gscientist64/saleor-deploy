@@ -25,7 +25,7 @@ services:
       timeout: 5s
       retries: 5
 
-  # Saleor API (Official) - Using Gunicorn
+  # Saleor API (Official)
   api:
     image: ghcr.io/saleor/saleor:3.21
     restart: unless-stopped
@@ -39,24 +39,14 @@ services:
       REDIS_URL: redis://redis:6379/0
       SECRET_KEY: change-this-to-a-very-secure-key-123456789
       ALLOWED_HOSTS: "*"
-      DEBUG: "false"
+      ALLOWED_CLIENT_HOSTS: "localhost,127.0.0.1,api,storefront,dashboard,postgres,redis,your-dokploy-domain.com"  # CRITICAL!
+      DEBUG: "False"
       DEFAULT_FROM_EMAIL: admin@yourstore.com
       DEFAULT_CHANNEL_SLUG: default-channel
       CELERY_BROKER_URL: redis://redis:6379/1
+      PYTHONUNBUFFERED: "1"
     volumes:
       - media_data:/app/media
-    command: >
-      sh -c "
-      echo '=== Starting Saleor API ===' &&
-      echo 'Waiting for database...' &&
-      sleep 10 &&
-      echo 'Running database migrations...' &&
-      python manage.py migrate --noinput &&
-      echo 'Creating default data...' &&
-      python manage.py populatedb --createsuperuser &&
-      echo 'Starting Gunicorn server...' &&
-      gunicorn saleor.wsgi:application --bind 0.0.0.0:8000 --workers 2 --access-logfile -
-      "
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health/"]
       interval: 30s
