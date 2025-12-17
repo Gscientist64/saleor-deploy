@@ -1,0 +1,20 @@
+FROM node:20-alpine AS runner
+WORKDIR /app
+
+ENV NODE_ENV=production
+ENV NEXT_TELEMETRY_DISABLED=1
+
+# Copy everything including node_modules (already built locally)
+COPY .next ./.next
+COPY public ./public
+COPY package.json ./
+COPY node_modules ./node_modules
+
+# Runtime environment variables
+ENV NEXT_PUBLIC_SALEOR_API_URL=http://api:8000/graphql/
+ENV NEXT_PUBLIC_STOREFRONT_URL=http://localhost:3002
+ENV NEXT_PUBLIC_DEFAULT_CHANNEL=gtech-laptops
+
+EXPOSE 3000
+
+CMD ["npm", "start"]
