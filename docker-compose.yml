@@ -79,8 +79,8 @@ services:
       ENABLE_SSL: "false"  # Dokploy handles SSL
     volumes:
       - media_data:/app/media
-   # ports:
-    #  - "8000:8000"
+    ports:
+      - "8000:8000"
     # REMOVED: healthcheck section
 
   # Saleor Dashboard (Official)
@@ -92,8 +92,8 @@ services:
     environment:
       API_URI: "http://api:8000/graphql/"
       APP_MOUNT_URI: /dashboard/
- #   ports:
-   #   - "3001:80"
+    ports:
+      - "3001:80"
 
   # Your Custom React Storefront
   storefront:
@@ -111,8 +111,8 @@ services:
       NEXT_PUBLIC_API_URI: "http://api:8000/graphql/"
       NEXT_PUBLIC_SALEOR_API_URL: "http://api:8000/graphql/"
       NEXT_PUBLIC_DEFAULT_CHANNEL: gtech-laptops
-   # ports:
-   #   - "3002:3000"
+    ports:
+      - "3002:3000"
 
 volumes:
   postgres_data:
