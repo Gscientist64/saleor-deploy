@@ -71,7 +71,7 @@ services:
       dockerfile: Dockerfile
       args:
         NEXT_PUBLIC_SALEOR_API_URL: https://demo.saleor.io/graphql/
-        NEXT_PUBLIC_STOREFRONT_URL: http://localhost:3000
+        NEXT_PUBLIC_STOREFRONT_URL: http://localhost:3002
         NEXT_PUBLIC_DEFAULT_CHANNEL: default-channel
     restart: unless-stopped
     depends_on:
@@ -81,7 +81,7 @@ services:
       NEXT_PUBLIC_SALEOR_API_URL: http://api:8000/graphql/
       NEXT_PUBLIC_DEFAULT_CHANNEL: default-channel
     ports:
-      - "3000:3000"
+      - "3002:3000"
 
 volumes:
   postgres_data:
