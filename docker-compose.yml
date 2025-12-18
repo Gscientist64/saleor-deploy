@@ -32,7 +32,6 @@ services:
     depends_on:
       - postgres  # Changed: removed condition
       - redis     # Changed: removed condition
-    environment:
    
     volumes:
       - media_data:/app/media
