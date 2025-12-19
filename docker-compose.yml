@@ -30,48 +30,28 @@ services:
     image: ghcr.io/saleor/saleor:3.21
     restart: unless-stopped
     depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_healthy
+      - postgres
+      - redis
     environment:
       # Database - FIXED: Using IP instead of hostname
       DATABASE_URL: postgres://saleor:saleor123@172.17.0.1:5432/saleor
       REDIS_URL: redis://redis:6379/0
-      PYTHONUNBUFFERED: 1
       
       # Security - TEMPORARY DEBUG MODE
       SECRET_KEY: ZV6llmVUoEg0g1KrP-uVFwgIwc_n0NLd2xaWEgkaGOjFRLhMVyVLO1aDRBIHRLNsMCA
       DEBUG: "true"
-      DJANGO_DEBUG: "true"
-      TEMPLATE_DEBUG: "true"
       
       # Hosts - TEMPORARY WILDCARD
       ALLOWED_HOSTS: "*"
-      ALLOWED_CLIENT_HOSTS: "*"
-      ALLOWED_REDIRECT_URLS: https://buildbasehq.com,https://admin.buildbasehq.com/dashboard/app
       
       # App settings
       DEFAULT_FROM_EMAIL: admin@example.com
       DEFAULT_CHANNEL_SLUG: gtech-laptops
-      CELERY_BROKER_URL: redis://redis:6379/1
-      ENABLE_SSL: "false"
-      
-      # URLs
-      STOREFRONT_URL: https://buildbasehq.com
-      DASHBOARD_URL: https://admin.buildbasehq.com/dashboard
     volumes:
       - media_data:/app/media
     ports:
       - "8000:8000"
-    command: >
-      sh -c "
-      echo 'Waiting for PostgreSQL...'
-      sleep 10
-      echo 'Running migrations...'
-      python manage.py migrate
-      echo 'Starting Saleor API...'
-      python manage.py runserver 0.0.0.0:8000"# Saleor Dashboard (Official)
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
   dashboard:
     image: ghcr.io/saleor/saleor-dashboard:3.21
     restart: unless-stopped
