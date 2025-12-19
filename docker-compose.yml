@@ -30,26 +30,52 @@ services:
     image: ghcr.io/saleor/saleor:3.21
     restart: unless-stopped
     depends_on:
-      - postgres  # Changed: removed condition
-      - redis     # Changed: removed condition
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
-      # Database configuration
-      DATABASE_URL: postgres://saleor:saleor123@postgres:5432/saleor
-      REDIS_URL: redis://redis:6379/0
-
+      # These are injected by Dokploy:
+      DATABASE_URL: ${DATABASE_URL:-postgres://saleor:saleor123@postgres:5432/saleor}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      PYTHONUNBUFFERED: ${PYTHONUNBUFFERED:-1}
+      
+      # These are MISSING from Dokploy - MUST ADD THEM HERE:
+      SECRET_KEY: ${SECRET_KEY:-ZV6llmVUoEg0g1KrP-uVFwgIwc_n0NLd2xaWEgkaGOjFRLhMXyVLO1aDRBIHRLNsMCA}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-.buildbasehq.com,143.105.174.140,localhost,127.0.0.1,api}
+      DEBUG: ${DEBUG:-false}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+      TEMPLATE_DEBUG: ${TEMPLATE_DEBUG:-false}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-admin@example.com}
+      DEFAULT_CHANNEL_SLUG: ${DEFAULT_CHANNEL_SLUG:-gtech-laptops}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/1}
+      ENABLE_SSL: ${ENABLE_SSL:-false}
+      
+      # URLs
+      STOREFRONT_URL: ${STOREFRONT_URL:-https://buildbasehq.com}
+      DASHBOARD_URL: ${DASHBOARD_URL:-https://admin.buildbasehq.com/dashboard}
+      ALLOWED_CLIENT_HOSTS: ${ALLOWED_CLIENT_HOSTS:-.buildbasehq.com,143.105.174.140,localhost,127.0.0.1,api}
+      ALLOWED_REDIRECT_URLS: ${ALLOWED_REDIRECT_URLS:-https://buildbasehq.com,https://admin.buildbasehq.com/dashboard/app}
     volumes:
       - media_data:/app/media
-    
-  #  ports:
-  #    - "8000:8000"
-    # REMOVED: healthcheck section
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
 
   # Saleor Dashboard (Official)
   dashboard:
     image: ghcr.io/saleor/saleor-dashboard:3.21
     restart: unless-stopped
     depends_on:
-      - api  # Changed: removed condition
+      api:
+        condition: service_started
+    environment:
+      API_URI: ${API_URI:-http://api:8000/graphql/}
+      APP_MOUNT_URI: ${APP_MOUNT_URI:-/dashboard/}
+    ports:
+      - "9000:80"
 
   # Your Custom React Storefront
   storefront:
@@ -57,12 +83,20 @@ services:
       context: .
       dockerfile: Dockerfile
       args:
-        NEXT_PUBLIC_SALEOR_API_URL: https://api.buildbasehq.com/graphql/
-        NEXT_PUBLIC_STOREFRONT_URL: https://buildbasehq.com
-        NEXT_PUBLIC_DEFAULT_CHANNEL: gtech-laptops
+        NEXT_PUBLIC_SALEOR_API_URL: ${NEXT_PUBLIC_SALEOR_API_URL:-https://api.buildbasehq.com/graphql/}
+        NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL:-https://buildbasehq.com}
+        NEXT_PUBLIC_DEFAULT_CHANNEL: ${NEXT_PUBLIC_DEFAULT_CHANNEL:-gtech-laptops}
     restart: unless-stopped
     depends_on:
       - api
+    environment:
+      NEXT_PUBLIC_SALEOR_API_URL: ${NEXT_PUBLIC_SALEOR_API_URL:-https://api.buildbasehq.com/graphql/}
+      NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL:-https://buildbasehq.com}
+      NEXT_PUBLIC_DEFAULT_CHANNEL: ${NEXT_PUBLIC_DEFAULT_CHANNEL:-gtech-laptops}
+      NODE_ENV: ${NODE_ENV:-production}
+      NEXT_TELEMETRY_DISABLED: ${NEXT_TELEMETRY_DISABLED:-1}
+    ports:
+      - "3000:3000"
 
 volumes:
   postgres_data:
