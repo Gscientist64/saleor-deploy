@@ -50,8 +50,8 @@ services:
       DEFAULT_CHANNEL_SLUG: ${DEFAULT_CHANNEL_SLUG:-gtech-laptops}
       CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/1}
       ENABLE_SSL: ${ENABLE_SSL:-false}
-      RSA_PRIVATE_KEY: |-
-        -----BEGIN PRIVATE KEY-----
+      RSA_PRIVATE_KEY: |
+        -----BEGIN PRIVATE KEY----- 
         MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQCdiykS0i8YVyJd
         NX10mNDncoZZ1UfWflwMSbSsBvYQoBWq0HWkZtNDJ5UZmDCGvaBLZbm9psH56bQq
         G7DfyV05d8h5iDFtOJPNLgmW5afhYgyPa0Djdv0ZUft6yxf/Mdpj2n/v3iAMJHW6
@@ -76,10 +76,10 @@ services:
         CyASZ2IJUTJ/rnXyzW+GqSCq87h/Vp94GhQkA0wQUNSTky9bcJo2WOquWCJiNBWK
         KqJzCI2LwwCqB0wL6GCU62kA8o6Oh4ddKLUIspG9AoGATB/Y5lmjDJaNHtTWslta
         QSdTvKsnWUhIfhqtHA6vuXOvZPN/fTeJbrxWlMKoXAya848/vFMWuODsy+Cvm1T7
-        8OSBT/bCRWC6GtfeFSXsUxopN0EKiIPC+3HeoSWlBHQ
-        FKepUglU2Cy+kNNYLjAf+
+        8OSBT/bCRWC6GtfeFSXsUxopN0EKiIPC+3HeoSWlBHQFKepUglU2Cy+kNNYLjAf+
         lcotVg280ARd9nprtY6Fyhg=
         -----END PRIVATE KEY-----
+      
       JWT_REFRESH_EXPIRE_DELTA_HOURS: ${JWT_REFRESH_EXPIRE_DELTA_HOURS:-8760}
       JWT_TTL_SECONDS: ${JWT_TTL_SECONDS:-60}
       
