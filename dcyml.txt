@@ -1,0 +1,136 @@
+services:
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: saleor
+      POSTGRES_PASSWORD: saleor123
+      POSTGRES_DB: saleor
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U saleor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Cache
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Saleor API (Official)
+  api:
+    image: ghcr.io/saleor/saleor:3.21
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      # These are injected by Dokploy:
+      DATABASE_URL: ${DATABASE_URL:-postgres://saleor:saleor123@postgres:5432/saleor}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
+      PYTHONUNBUFFERED: ${PYTHONUNBUFFERED:-1}
+      
+      # These are MISSING from Dokploy - MUST ADD THEM HERE:
+      SECRET_KEY: ${SECRET_KEY:-ZV6llmVUoEg0g1KrP-uVFwgIwc_n0NLd2xaWEgkaGOjFRLhMXyVLO1aDRBIHRLNsMCA}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-.buildbasehq.com,143.105.174.140,localhost,127.0.0.1,api}
+      DEBUG: ${DEBUG:-false}
+      DJANGO_DEBUG: ${DJANGO_DEBUG:-false}
+      TEMPLATE_DEBUG: ${TEMPLATE_DEBUG:-false}
+      DEFAULT_FROM_EMAIL: ${DEFAULT_FROM_EMAIL:-admin@example.com}
+      DEFAULT_CHANNEL_SLUG: ${DEFAULT_CHANNEL_SLUG:-gtech-laptops}
+      CELERY_BROKER_URL: ${CELERY_BROKER_URL:-redis://redis:6379/1}
+      ENABLE_SSL: ${ENABLE_SSL:-false}
+      RSA_PRIVATE_KEY: |
+        -----BEGIN PRIVATE KEY-----
+        MIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDP1NdgVobH58B1
+        8BKznE8AHjyfdhOkqviWc10ZRhQcw254FakZoZ0Lek1Mo7MDCrfkt2A2cHfh25YY
+        sT1ZjLUMZRpmpd0mz5dlqWHfwd1OCjEnlFl/tu4b0+xohv2BA7ggldU1ey/MG57o
+        RElkQvsYx1HW97n63Rt9QoyDhJ+59RGnOFGdOIdwPIJUEWNBw1wTGiBpe6iG6lMB
+        Z8bi+OczlHTfEYj/By3o9EHqx9AsrC10moWq4ezCXs8xP/gvtKXXejS9fIuOmgKU
+        NU0XNnClzBy/VVZ8l3CNWzZKGthwdFEQTOzxfoun+Lw5BshDzeiJcDT8caUsyeoD
+        IoAkl4AjAgMBAAECggEAIAX8NRMatnUTtzh0MT+4U9zU238+p0SphB582GGaGhUq
+        PDpI3DMGTJfzjt0PFBIT5BvgqSgVmMlp1x6BmlRE1gbtaqahAmjB5moTM36e18ut
+        55rYsDCi1MqH5qfyKhhwHSPpKSdKO0mAPUAUYkIIiGNh+AfOHNpH8OTkW3l/1mT7
+        fACQAUPiHIyJucOtNhV266W5So/BhyKW02PXjiwyXDkjbQ73swRKfBMAcMstY7NI
+        sQcLYKAeOCexo1GPvOEfDhBBzpjaBuU1X769dUsVHawDDTsvmR4LouIfNOypNNdV
+        jkJgHLVhOSEFhPGa1v8pA+qajy06syN28Q4nbs08jQKBgQD38XwX5j1mmeRBdyFE
+        Q0NFVjYqAo0irucXV6go3kMVR8YXSQ1T0Q2WKjXLrvXr1okCfeL6XycYS67m5d8B
+        91rMcq7Vv2PVC7KFQZ9d/hizn8Xybc5s+x1In2vzwhFJpR5tByIJ5BvrwqhNNN+y
+        fWeQGmgKre+AzvDUVSnu7vA0rQKBgQDWla+eB4QS8lMKfWeaAhZZX+yYm7p+7Pqx
+        59EGw8M/L8FyBKwwxNXqS8kO6W8lBeNf2u9BcqgWMkiU16iPeCAVhZ3BRi/Z5TBZ
+        ry6aELlSEsSrUNc5gZrBXWFO4noFQ6nk9XEd91jMbMArVF51GeTNA2EnECVNBlPV
+        NgyZYdlSDwKBgBoDgB2RzodhRg2ITjk3RWuU7AHkWqJ071IHpGEFUMx+x03SIE/W
+        8zH6I8LHDI496AoW4yWZriRibGtVWtx980zYC3fpqLPFkmlgxTO7YSQXc1FILAxL
+        HHtuHolopx+u705JHU0kXbmSps3S6lVzytXXr2rPbP16uNHOTaP/9bvRAoGALHYJ
+        VDoEcJSLBjJjo/JoxQ3uDNS/eIsLio8YrUkkjFQNxd0X/GbcV9ZqC0/suoQUz4ii
+        aDIkh6zVgxmIEGn4Y90yiZhMU957/SkiA8QRUeMXotN2NLEY6pW5ksm0NKEHc6wz
+        St00Je8mhhPOGn9J+/yGRby/rczw082GIMW4bJsCgYEAlzQYzoKkasLbK46i9C5A
+        WR71RJGYk4vAAlHrngtZMRTzCR1HwwnkdhgSsrKHEyWow75Vm3LYGx1qpYwcRJVj
+        ukFzaYGI2cmS8jNar4Z44ZqWotFBUDMUQuLYw4JE4Q2RH2dSDPyBviZSkOnoE3rK
+        hLKswUP5kmc/YkqQv4NKlZM=
+        -----END PRIVATE KEY-----
+      
+      JWT_REFRESH_EXPIRE_DELTA_HOURS: ${JWT_REFRESH_EXPIRE_DELTA_HOURS:-8760}
+      JWT_TTL_SECONDS: ${JWT_TTL_SECONDS:-60}
+      
+      # URLs
+      STOREFRONT_URL: ${STOREFRONT_URL:-https://buildbasehq.com}
+      DASHBOARD_URL: ${DASHBOARD_URL:-https://admin.buildbasehq.com/dashboard}
+      ALLOWED_CLIENT_HOSTS: ${ALLOWED_CLIENT_HOSTS:-.buildbasehq.com,143.105.174.140,localhost,127.0.0.1,api}
+      ALLOWED_REDIRECT_URLS: ${ALLOWED_REDIRECT_URLS:-https://buildbasehq.com,https://admin.buildbasehq.com/dashboard/app}
+    volumes:
+      - media_data:/app/media
+    ports:
+      - "8000:8000"
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
+
+  # Saleor Dashboard (Official)
+  dashboard:
+    image: ghcr.io/saleor/saleor-dashboard:3.21
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_started
+    environment:
+      API_URI: ${API_URI:-http://api:8000/graphql/}
+      APP_MOUNT_URI: ${APP_MOUNT_URI:-/dashboard/}
+    ports:
+      - "9000:80"
+
+  # Your Custom React Storefront - PORT CHANGED TO 3001
+  storefront:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_SALEOR_API_URL: ${NEXT_PUBLIC_SALEOR_API_URL:-https://api.buildbasehq.com/graphql/}
+        NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL:-https://buildbasehq.com}
+        NEXT_PUBLIC_DEFAULT_CHANNEL: ${NEXT_PUBLIC_DEFAULT_CHANNEL:-gtech-laptops}
+    restart: unless-stopped
+    depends_on:
+      - api
+    environment:
+      NEXT_PUBLIC_SALEOR_API_URL: ${NEXT_PUBLIC_SALEOR_API_URL:-https://api.buildbasehq.com/graphql/}
+      NEXT_PUBLIC_STOREFRONT_URL: ${NEXT_PUBLIC_STOREFRONT_URL:-https://buildbasehq.com}
+      NEXT_PUBLIC_DEFAULT_CHANNEL: ${NEXT_PUBLIC_DEFAULT_CHANNEL:-gtech-laptops}
+      NODE_ENV: ${NODE_ENV:-production}
+      NEXT_TELEMETRY_DISABLED: ${NEXT_TELEMETRY_DISABLED:-1}
+    # CHANGED FROM 3000 TO 3001
+    ports:
+      - "3001:3000"
+
+volumes:
+  postgres_data:
+  media_data:
