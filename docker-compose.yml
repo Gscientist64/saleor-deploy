@@ -36,7 +36,7 @@ services:
         condition: service_healthy
     environment:
       # These are injected by Dokploy:
-      DATABASE_URL: ${DATABASE_URL:-postgres://saleor:saleor123@postgres:5432/saleor}
+      DATABASE_URL: ${DATABASE_URL:-postgres://saleor:saleor123@172.17.0.1:5432/saleor}
       REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       PYTHONUNBUFFERED: ${PYTHONUNBUFFERED:-1}
       
