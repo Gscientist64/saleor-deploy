@@ -32,7 +32,11 @@ services:
     depends_on:
       - postgres  # Changed: removed condition
       - redis     # Changed: removed condition
-   
+    environment:
+      # Database configuration
+      DATABASE_URL: postgres://saleor:saleor123@postgres:5432/saleor
+      REDIS_URL: redis://redis:6379/0
+
     volumes:
       - media_data:/app/media
     
