@@ -41,8 +41,8 @@ services:
       PYTHONUNBUFFERED: 1
       
       # Security - TEMPORARY DEBUG MODE
-      SECRET_KEY: ZV6llmVUoEg0g1KrP-uVFwgIwc_n0NLd2xaWEgkaGOjFRLhMXyVLO1aDRBIHRLNsMCA
-      DEBUG: "true"  # TEMPORARY: bypasses RSA key validation
+      SECRET_KEY: ZV6llmVUoEg0g1KrP-uVFwgIwc_n0NLd2xaWEgkaGOjFRLhMVyVLO1aDRBIHRLNsMCA
+      DEBUG: "true"
       DJANGO_DEBUG: "true"
       TEMPLATE_DEBUG: "true"
       
@@ -65,35 +65,13 @@ services:
     ports:
       - "8000:8000"
     command: >
-      sh -c "echo '=== Testing Database Connection ===' &&
-             # Try multiple connection methods
-             for host in '172.17.0.1' 'host.docker.internal' '172.18.0.1'; do
-               echo \"Trying host: \$host\" &&
-               timeout 5 python -c \"
-import psycopg2
-try:
-    conn = psycopg2.connect(
-        host='\$host',
-        database='saleor',
-        user='saleor',
-        password='saleor123',
-        port=5432,
-        connect_timeout=3
-    )
-    print('✅ SUCCESS: Connected to ' + '\$host')
-    conn.close()
-    exit(0)
-except Exception as e:
-    print('❌ FAILED: ' + str(e))
-    exit(1)
-\" 2>/dev/null && break || continue
-             done &&
-             echo 'Running migrations...' &&
-             python manage.py migrate &&
-             echo 'Starting Saleor API...' &&
-             python manage.py runserver 0.0.0.0:8000"
-
-  # Saleor Dashboard (Official)
+      sh -c "
+      echo 'Waiting for PostgreSQL...'
+      sleep 10
+      echo 'Running migrations...'
+      python manage.py migrate
+      echo 'Starting Saleor API...'
+      python manage.py runserver 0.0.0.0:8000"# Saleor Dashboard (Official)
   dashboard:
     image: ghcr.io/saleor/saleor-dashboard:3.21
     restart: unless-stopped
