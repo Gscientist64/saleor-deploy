@@ -3,11 +3,11 @@ FROM node:20-alpine AS builder
 WORKDIR /app
 
 # Accept build arguments
-ARG NEXT_PUBLIC_SALEOR_API_URL=http://143.105.174.140/graphql/
-ARG NEXT_PUBLIC_STOREFRONT_URL=http://143.105.174.140
+ARG NEXT_PUBLIC_SALEOR_API_URL=https://api.buildbasehq.com/graphql/
+ARG NEXT_PUBLIC_STOREFRONT_URL=https://buildbasehq.com
 ARG NEXT_PUBLIC_DEFAULT_CHANNEL=gtech-laptops
 
-# Set environment variables
+# Set environment variables (these will use the build args above)
 ENV NEXT_PUBLIC_SALEOR_API_URL=${NEXT_PUBLIC_SALEOR_API_URL}
 ENV NEXT_PUBLIC_STOREFRONT_URL=${NEXT_PUBLIC_STOREFRONT_URL}
 ENV NEXT_PUBLIC_DEFAULT_CHANNEL=${NEXT_PUBLIC_DEFAULT_CHANNEL}
